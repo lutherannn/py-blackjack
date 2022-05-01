@@ -1,11 +1,11 @@
 # py-blackjack
 Blackjack in python, soon to be a true simulation with betting, etc. But for now this is somewhat functional. See TODO for future updates and things you can help with.
 
-#USAGE
+# USAGE
 This requires no extra libraries, so any standard installation of python 3.\* will work<br>
 python py-blackjack.py
 
-#TODO
+# TODO
 Add support for invalid hands. Rare cases may have the dealer and the user's hands have more than four kind of one card.<br>
 Add support for betting.<br>
 Fix dealer hand so the dealer's hidden card gets shown after the user stands, as in real life<br>
