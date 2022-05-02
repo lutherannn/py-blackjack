@@ -67,7 +67,6 @@ def hit(player):
             dealerStand = True
         if dealerCount > 21:
             dealerBust = True
-            dealerCount = 0
 
 def dealerActions():
     global dealerHand, dealerCount, dealerStand, dealerBust
