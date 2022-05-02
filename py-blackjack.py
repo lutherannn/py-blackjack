@@ -1,104 +1,119 @@
-import random, os
+# Module imports
+import random, sys, os, time
 
+# Variables
 cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-dealerHand = []
+usedCards = []
 userHand = []
-dealerCount = 0
 userCount = 0
-chars = "[],"
-dealerStand = False
-userStand = False
-dealerBust = False
 userBust = False
+userStand = False
+dealerHand = []
+dealerCount = 0
+dealerBust = False
+dealerStand = False
 
-def dealDealer():
-    global dealerCount
-    global dealerHand
-    for _ in range(2):
-        card = random.choice(cards)
-        if card in [1, 11]:
-            if dealerCount < 11:
-                dealerHand.append(11)
-            else:
-                dealerHand.append(1)
-        else:
-            dealerHand.append(card)
-        dealerCount = sum(dealerHand)
-    print(f"Dealer hand: {dealerHand[0]}, *")
-    #print(f"Dealer count: {dealerCount}\n")
-def dealUser():
-    global userCount
-    global userHand
-    for _ in range(2):
-        card = random.choice(cards)
-        if card in [1, 11]:
-            if userCount < 12 and userCount != 11:
-                userHand.append(11)
-            else:
-                userHand.append(1)
-        else:
-            userHand.append(card)
-        userCount = sum(userHand)
-    print("Your hand: " + ", ".join(map(str, userHand)))
-    print(f"Your count: {userCount}\n")
-def hit(player):
-    global userCount, userHand, dealerCount, dealerHand
-    if player == "user":
-        card = random.choice(cards)
-        userHand.append(card)
-        userCount = sum(userHand)
-        print("Your hand: " + ", ".join(map(str, userHand)))
-        print(f"Count: {userCount}")
-        if userCount > 21:
-            userBust = True
-            print("Bust")
-        if userCount == 21:
-            print("Blackjack")
-
-    if player == "dealer":
-        if dealerCount <= 16 and not dealerCount == 21:
-            while dealerCount  <= 16:     
-                card = random.choice(cards)
-                dealerHand.append(card)
-                dealerCount = sum(dealerHand)
-                print("Dealer hand: " + ", ".join(map(str, dealerHand)))
-                print(f"Dealer count: {dealerCount}")
-        if dealerCount >= 16 and not dealerCount <= 21:
-            dealerStand = True
-        if dealerCount > 21:
-            dealerBust = True
-            dealerCount = 0
-
-def dealerActions():
-    global dealerHand, dealerCount, dealerStand, dealerBust
-    hit("dealer")
-    clear()
 
 def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print(f"Dealer hand: {dealerHand[0]}, *")
-    print("Your hand: " + ", ".join(map(str, userHand)))
-    print(f"Count: {userCount}")
+    global userHand, userCount, dealerHand, dealerCount
+    os.system("cls" if os.name == "nt" else "clear")
+    print(f"Dealer hand: {dealerHand}")
+    print(f"Dealer count: {dealerCount}\n")
+    print(f"Your hand: {userHand}")
+    print(f"Your count: {userCount}")
 
-def gameLoop():
-    global userStand
-    while not userStand:
+
+def main():
+    global cards, usedCards, userHand, userCount, userBust, userStand, dealerHand, dealerCount, dealerBust, dealerStand
+    # Dealing dealer
+    for _ in range(2):
+        card = random.choice(cards)
+        if card == 1 or card == 11 and len(dealerHand) < 2:
+            if dealerCount >= 11:
+                dealerHand.append(1)
+                usedCards.append(1)
+            else:
+                dealerHand.append(11)
+                usedCards.append(11)
+        else:
+            dealerHand.append(card)
+            usedCards.append(card)
+            dealerCount = sum(dealerHand)
+    print(dealerHand, dealerCount, "\n")
+
+    # Dealing user
+    for _ in range(2):
+        card = random.choice(cards)
+        if card == 1 or card == 11:
+            if userCount >= 11:
+                userHand.append(1)
+                usedCards.append(1)
+            else:
+                userHand.append(11)
+                usedCards.append(11)
+        else:
+            userHand.append(card)
+            usedCards.append(card)
+            userCount = sum(userHand)
+    print(userHand, userCount)
+
+    # User actions
+    while not userStand or userBust:
         action = input("(s)tand or (h)it: ")
         if action == "s" or action == "stand":
             userStand = True
         if action == "h" or action == "hit":
-            hit("user")
+            card = random.choice(cards)
+            userHand.append(card)
+            userCount = sum(userHand)
             clear()
-    dealerActions()
+            if userCount > 21:
+                print("Bust")
+                userBust = True
+                break
+            if userCount == 21:
+                print("Blackjack")
+                userStand = True
 
-    if dealerCount > userCount and not dealerBust:
+    # Dealer actions
+    if dealerCount > 15 and dealerCount < 22:
+        clear()
+    while dealerCount < 16:
+        card = random.choice(cards)
+        dealerHand.append(card)
+        dealerCount = sum(dealerHand)
+        time.sleep(2)
+        clear()
+        if dealerCount > 21:
+            print("Dealer busts")
+            dealerBust = True
+            break
+        elif dealerCount == 21:
+            print("Dealer blackjack")
+            dealerStand = True
+        clear()
+        dealerStand = True
+    # Determine winner
+    if userCount > dealerCount and userBust == False:
+        print("You win")
+    elif dealerCount > userCount and dealerBust == False:
         print("Dealer wins")
-        print(f"Dealer count: {dealerCount}")
-    if userCount > dealerCount and not userBust:
-        print(f"Dealer count: {dealerCount}")
-        print("User wins")
-    if dealerCount == userCount and not userBust and not dealerBust:
+    elif userCount == dealerCount and userBust == False and dealerBust == False:
         print("Split pot")
-dealDealer()
-dealUser()
-gameLoop()
+    # Reset variables for next game
+    userHand = []
+    userCount = 0
+    dealerHand = []
+    dealerCount = 0
+    userStand = False
+    userBust = False
+    dealerStand = False
+    dealerBust = False
+    time.sleep(3)
+
+
+# Run games specified times
+if len(sys.argv) == 2:
+    for _ in range(int(sys.argv[1])):
+        os.system("cls" if os.name == "nt" else "clear")
+        main()
