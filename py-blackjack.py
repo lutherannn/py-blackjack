@@ -12,6 +12,8 @@ dealerHand = []
 dealerCount = 0
 dealerBust = False
 dealerStand = False
+bal = 0
+bet = 0
 
 
 def clear():
@@ -24,11 +26,19 @@ def clear():
 
 
 def main():
-    global cards, usedCards, userHand, userCount, userBust, userStand, dealerHand, dealerCount, dealerBust, dealerStand
+    global cards, usedCards, userHand, userCount, userBust, userStand, dealerHand, dealerCount, dealerBust, dealerStand, bal, bet
+
+    # Get bet from user
+    print(f"Current balance: {bal}")
+    bet = int(input("Enter bet: "))
+    if bet > bal or bet <= 0:
+        print("Invalid bet.")
+    bal = bal - bet
+
     # Dealing dealer
     for _ in range(2):
         card = random.choice(cards)
-        if card == 1 or card == 11 and len(dealerHand) < 2:
+        if card == 1 or card == 11:
             if dealerCount >= 11:
                 dealerHand.append(1)
                 usedCards.append(1)
@@ -54,7 +64,7 @@ def main():
         else:
             userHand.append(card)
             usedCards.append(card)
-            userCount = sum(userHand)
+        userCount = sum(userHand)
     print(userHand, userCount)
 
     # User actions
@@ -93,13 +103,16 @@ def main():
             dealerStand = True
         clear()
         dealerStand = True
-    # Determine winner
+
+    # Determine winner and give winnings
     if userCount > dealerCount and userBust == False:
         print("You win")
+        bal = bal + (bet * 2)
     elif dealerCount > userCount and dealerBust == False:
         print("Dealer wins")
     elif userCount == dealerCount and userBust == False and dealerBust == False:
         print("Split pot")
+        bal = bal + bet
     # Reset variables for next game
     userHand = []
     userCount = 0
@@ -114,6 +127,11 @@ def main():
 
 # Run games specified times
 if len(sys.argv) == 2:
+    bal = int(input("Enter starting balance: "))
+
     for _ in range(int(sys.argv[1])):
         os.system("cls" if os.name == "nt" else "clear")
         main()
+else:
+    print("Not enough arguments")
+    print("Usage: python py-blackjack.py <num of games>")
