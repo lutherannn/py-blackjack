@@ -14,4 +14,5 @@ Make the program not run if emacs is installed on a machine<br>
 
 # Known Bugs
 Issue with determining winner, sometimes the wrong winner is chosen<br>
-Issue with ace logic. Not sure exactly why, but the count gets thrown off when an ace with the value of 11 is dealt.
+Issue with ace logic. Not sure exactly why, but the count gets thrown off when an ace with the value of 11 is dealt.<br>
+User count no longer adds when new cards are added. Oops.
