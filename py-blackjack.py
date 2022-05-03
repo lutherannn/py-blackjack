@@ -2,8 +2,52 @@
 import random, sys, os, time
 
 # Variables
-cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-usedCards = []
+cards = [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+]
 userHand = []
 userCount = 0
 userBust = False
@@ -41,14 +85,16 @@ def main():
         if card == 1 or card == 11:
             if dealerCount >= 11:
                 dealerHand.append(1)
-                usedCards.append(1)
+                cards.remove(1)
+                dealerCount = sum(dealerHand)
             else:
                 dealerHand.append(11)
-                usedCards.append(11)
+                cards.remove(11)
+                dealerCount = sum(dealerHand)
         else:
             dealerHand.append(card)
-            usedCards.append(card)
-            dealerCount = sum(dealerHand)
+            cards.remove(card)
+        dealerCount = sum(dealerHand)
     print(dealerHand, dealerCount, "\n")
 
     # Dealing user
@@ -57,13 +103,15 @@ def main():
         if card == 1 or card == 11:
             if userCount >= 11:
                 userHand.append(1)
-                usedCards.append(1)
+                cards.remove(1)
+                userCount = sum(userHand)
             else:
                 userHand.append(11)
-                usedCards.append(11)
+                cards.remove(11)
+                userCount = sum(userHand)
         else:
             userHand.append(card)
-            usedCards.append(card)
+            cards.remove(card)
         userCount = sum(userHand)
     print(userHand, userCount)
 
@@ -75,7 +123,7 @@ def main():
         if action == "h" or action == "hit":
             card = random.choice(cards)
             userHand.append(card)
-            userCount = sum(userHand)
+
             clear()
             if userCount > 21:
                 print("Bust")
@@ -91,6 +139,7 @@ def main():
     while dealerCount < 16:
         card = random.choice(cards)
         dealerHand.append(card)
+        cards.remove(card)
         dealerCount = sum(dealerHand)
         time.sleep(2)
         clear()
