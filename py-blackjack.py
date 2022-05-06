@@ -122,8 +122,14 @@ def main():
             userStand = True
         if action == "h" or action == "hit":
             card = random.choice(cards)
+            if card == 1 or card == 11:
+                if userCount >= 11:
+                    card = 1
+                elif userCount < 11:
+                    card = 11
             userHand.append(card)
-
+            cards.remove(card)
+            userCount = sum(userHand)
             clear()
             if userCount > 21:
                 print("Bust")
@@ -137,6 +143,8 @@ def main():
     if dealerCount > 15 and dealerCount < 22:
         clear()
     while dealerCount < 16:
+        if userBust:
+            break
         card = random.choice(cards)
         dealerHand.append(card)
         cards.remove(card)
