@@ -6,3 +6,5 @@
 # Personal test files
 test.py
 
+# Bash scripts
+*.sh
