@@ -69,6 +69,19 @@ def clear():
     print(f"Your count: {userCount}")
 
 
+def findWinner():
+    global userCount, userBust, userStand, dealerCount, dealerBust, dealerStand, bal, bet
+    if userCount > dealerCount and userBust == False:
+        print("User wins")
+        bal = bal + (bet * 2)
+    if dealerCount > userCount and dealerBust == False:
+        print("Dealer wins")
+    if userCount == dealerCount and userBust == False and dealerBust == False:
+        print("Split pot")
+        bal = bal + bet
+    time.sleep(3)
+
+
 def main():
     global cards, usedCards, userHand, userCount, userBust, userStand, dealerHand, dealerCount, dealerBust, dealerStand, bal, bet
 
@@ -141,36 +154,31 @@ def main():
 
     # Dealer actions
     if dealerCount > 15 and dealerCount < 22:
-        clear()
-    while dealerCount < 16:
-        if userBust:
-            break
-        card = random.choice(cards)
-        dealerHand.append(card)
-        cards.remove(card)
-        dealerCount = sum(dealerHand)
-        time.sleep(2)
-        clear()
-        if dealerCount > 21:
-            print("Dealer busts")
-            dealerBust = True
-            break
-        elif dealerCount == 21:
-            print("Dealer blackjack")
-            dealerStand = True
-        clear()
         dealerStand = True
+        findWinner()
+    else:
+        while dealerCount < 16:
+            if userBust:
+                break
+            card = random.choice(cards)
+            dealerHand.append(card)
+            cards.remove(card)
+            dealerCount = sum(dealerHand)
+            time.sleep(2)
+            clear()
+            if dealerCount > 21:
+                print("Dealer busts")
+                dealerBust = True
+                findWinner()
+                break
+            elif dealerCount == 21:
+                print("Dealer blackjack")
+                dealerStand = True
+                findWinner()
+                break
+            clear()
+            dealerStand = True
 
-    # Determine winner and give winnings
-    if userCount > dealerCount and userBust == False:
-        print("You win")
-        bal = bal + (bet * 2)
-    elif dealerCount > userCount and dealerBust == False:
-        print("Dealer wins")
-    elif userCount == dealerCount and userBust == False and dealerBust == False:
-        print("Split pot")
-        bal = bal + bet
-    # Reset variables for next game
     userHand = []
     userCount = 0
     dealerHand = []
@@ -179,7 +187,10 @@ def main():
     userBust = False
     dealerStand = False
     dealerBust = False
-    time.sleep(3)
+
+    if bal <= 0:
+        print("You went bankrupt")
+        sys.exit()
 
 
 # Run games specified times
