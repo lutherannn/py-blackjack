@@ -1,205 +1,156 @@
-# Module imports
-import random, sys, os, time
-
-# Variables
-cards = [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-]
-userHand = []
-userCount = 0
-userBust = False
-userStand = False
-dealerHand = []
-dealerCount = 0
-dealerBust = False
-dealerStand = False
-bal = 0
-bet = 0
+import random
+import sys
+import os
+import time
 
 
 def clear():
-    global userHand, userCount, dealerHand, dealerCount
     os.system("cls" if os.name == "nt" else "clear")
-    print(f"Dealer hand: {dealerHand}")
-    print(f"Dealer count: {dealerCount}\n")
-    print(f"Your hand: {userHand}")
-    print(f"Your count: {userCount}")
 
 
-def findWinner():
-    global userCount, userBust, userStand, dealerCount, dealerBust, dealerStand, bal, bet
-    if userCount > dealerCount and userBust == False:
-        print("User wins")
-        bal = bal + (bet * 2)
-    if dealerCount > userCount and dealerBust == False:
-        print("Dealer wins")
-    if userCount == dealerCount and userBust == False and dealerBust == False:
-        print("Split pot")
-        bal = bal + bet
+deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10,
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10,
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10,
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+playerHand = []
+dealerHand = []
+playerCount = 0
+dealerCount = 0
+playerDone = False
+playerBust = False
+dealerDone = False
+dealerBust = False
+playerNatural = False
+dealerNatural = False
+validBet = False
+balance = 0
+bet = 0
+
+balance = int(input("Enter starting balance> "))
+time.sleep(1)
+
+while len(deck) > 11:
+    while not validBet:
+        clear()
+        bet = int(
+            input(f"Enter amount to bet (Current balance: {balance}): "))
+        if bet > balance:
+            print("Bet cannot be greater than balance")
+            time.sleep(2)
+        else:
+            balance -= bet
+            validBet = True
+
+    for x in range(2):
+        card = random.choice(deck)
+        if card == 1:
+            if playerCount <= 10:
+                playerHand.append(11)
+            else:
+                playerHand.append(1)
+        else:
+            playerHand.append(card)
+        deck.remove(card)
+        playerCount = sum(playerHand)
+
+    for x in range(2):
+        card = random.choice(deck)
+        if card == 1:
+            if dealerCount <= 10:
+                dealerHand.append(11)
+            else:
+                dealerHand.append(1)
+        else:
+            dealerHand.append(card)
+        deck.remove(card)
+        dealerCount = sum(dealerHand)
+
+    print(playerHand, playerCount)
+    print(dealerHand[0], dealerHand[0])
+
+    if playerCount == 21:
+        print("Player wins with natural 21")
+        playerNatural = True
+    if dealerCount == 21:
+        print("Dealer wins with natural 21")
+        dealerNatural = True
+
+    while not playerDone:
+        if not playerNatural:
+            playerAction = input("(S)tand or (H)it> ").lower()
+            if playerAction == "h":
+                card = random.choice(deck)
+                if card == 1:
+                    if playerCount <= 10:
+                        playerHand.append(11)
+                    else:
+                        playerHand.append(1)
+                else:
+                    playerHand.append(card)
+                deck.remove(card)
+                playerCount = sum(playerHand)
+            clear()
+
+            print(playerHand, playerCount)
+            print(dealerHand[0], dealerHand[0])
+
+        if playerCount > 21:
+            print("Player busts.")
+            playerDone = True
+            playerBust = True
+        if playerAction == "s" and not dealerNatural:
+            playerDone = True
+    if not playerBust:
+        while dealerCount < 17:
+            card = random.choice(deck)
+            if card == 1:
+                if dealerCount <= 10:
+                    dealerHand.append(11)
+                else:
+                    dealerHand.append(1)
+            else:
+                dealerHand.append(card)
+            deck.remove(card)
+            dealerCount = sum(dealerHand)
+        clear()
+
+        print(playerHand, playerCount)
+        print(dealerHand, dealerCount)
+
+        if dealerCount > 21:
+            print("Dealer busts.")
+            dealerBust = True
+
+    clear()
+    print(playerHand, playerCount)
+    print(dealerHand, dealerCount)
+
+    if playerCount > dealerCount:
+        if playerBust:
+            print("Dealer wins!")
+        else:
+            print("Player wins!")
+            balance = balance + (bet * 2)
+    elif dealerCount > playerCount:
+        if dealerBust:
+            print("Player wins!")
+            balance += bet * 2
+        else:
+            print("Dealer Wins!")
+    if playerCount == dealerCount:
+        print("Push!")
+        balance += bet
+
+    playerHand = []
+    dealerHand = []
+    playerCount = 0
+    dealerCount = 0
+    playerBust = False
+    dealerBust = False
+    playerDone = False
+    dealerDone = False
+    validBet = False
+    bet = 0
     time.sleep(3)
 
-
-def main():
-    global cards, usedCards, userHand, userCount, userBust, userStand, dealerHand, dealerCount, dealerBust, dealerStand, bal, bet
-
-    # Get bet from user
-    print(f"Current balance: {bal}")
-    bet = int(input("Enter bet: "))
-    if bet > bal or bet <= 0:
-        print("Invalid bet.")
-    bal = bal - bet
-
-    # Dealing dealer
-    for _ in range(2):
-        card = random.choice(cards)
-        if card == 1 or card == 11:
-            if dealerCount >= 11:
-                dealerHand.append(1)
-                cards.remove(1)
-                dealerCount = sum(dealerHand)
-            else:
-                dealerHand.append(11)
-                cards.remove(11)
-                dealerCount = sum(dealerHand)
-        else:
-            dealerHand.append(card)
-            cards.remove(card)
-        dealerCount = sum(dealerHand)
-    print(dealerHand, dealerCount, "\n")
-
-    # Dealing user
-    for _ in range(2):
-        card = random.choice(cards)
-        if card == 1 or card == 11:
-            if userCount >= 11:
-                userHand.append(1)
-                cards.remove(1)
-                userCount = sum(userHand)
-            else:
-                userHand.append(11)
-                cards.remove(11)
-                userCount = sum(userHand)
-        else:
-            userHand.append(card)
-            cards.remove(card)
-        userCount = sum(userHand)
-    print(userHand, userCount)
-
-    # User actions
-    while not userStand or userBust:
-        action = input("(s)tand or (h)it: ")
-        if action == "s" or action == "stand":
-            userStand = True
-        if action == "h" or action == "hit":
-            card = random.choice(cards)
-            if card == 1 or card == 11:
-                if userCount >= 11:
-                    card = 1
-                elif userCount < 11:
-                    card = 11
-            userHand.append(card)
-            cards.remove(card)
-            userCount = sum(userHand)
-            clear()
-            if userCount > 21:
-                print("Bust")
-                userBust = True
-                break
-            if userCount == 21:
-                print("Blackjack")
-                userStand = True
-
-    # Dealer actions
-    if dealerCount > 15 and dealerCount < 22:
-        dealerStand = True
-        findWinner()
-    else:
-        while dealerCount < 16:
-            if userBust:
-                break
-            card = random.choice(cards)
-            dealerHand.append(card)
-            cards.remove(card)
-            dealerCount = sum(dealerHand)
-            time.sleep(2)
-            clear()
-            if dealerCount > 21:
-                print("Dealer busts")
-                dealerBust = True
-                findWinner()
-                break
-            elif dealerCount == 21:
-                print("Dealer blackjack")
-                dealerStand = True
-                findWinner()
-                break
-            clear()
-            dealerStand = True
-
-    userHand = []
-    userCount = 0
-    dealerHand = []
-    dealerCount = 0
-    userStand = False
-    userBust = False
-    dealerStand = False
-    dealerBust = False
-
-    if bal <= 0:
-        print("You went bankrupt")
-        sys.exit()
-
-
-# Run games specified times
-if len(sys.argv) == 2:
-    bal = int(input("Enter starting balance: "))
-
-    for _ in range(int(sys.argv[1])):
-        os.system("cls" if os.name == "nt" else "clear")
-        main()
-else:
-    print("Not enough arguments")
-    print("Usage: python py-blackjack.py <num of games>")
+sys.exit()
