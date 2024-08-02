@@ -24,9 +24,11 @@ playerNatural = False
 dealerNatural = False
 validBet = False
 balance = 0
+startingBalance = 0
 bet = 0
 
 balance = int(input("Enter starting balance> "))
+startingBalance = balance
 time.sleep(1)
 
 while len(deck) > 11:
@@ -65,8 +67,10 @@ while len(deck) > 11:
         deck.remove(card)
         dealerCount = sum(dealerHand)
 
-    print(playerHand, playerCount)
-    print(dealerHand[0], dealerHand[0])
+    print(f"Your hand: {", ".join(map(str, playerHand))
+                        }. Current count: {playerCount}")
+    print(f"Dealer's hand: {dealerHand[0]
+                            }, *. Dealer's Count: {dealerHand[0]}")
 
     if playerCount == 21:
         print("Player wins with natural 21")
@@ -91,8 +95,11 @@ while len(deck) > 11:
                 playerCount = sum(playerHand)
             clear()
 
-            print(playerHand, playerCount)
-            print(dealerHand[0], dealerHand[0])
+            print(f"Your hand: {", ".join(
+                map(str, playerHand))}. Current count: {playerCount}")
+
+            print(f"Dealer's hand: {dealerHand[0]
+                                    }, *. Dealer's Count: {dealerHand[0]}")
 
         if playerCount > 21:
             print("Player busts.")
@@ -114,16 +121,22 @@ while len(deck) > 11:
             dealerCount = sum(dealerHand)
         clear()
 
-        print(playerHand, playerCount)
-        print(dealerHand, dealerCount)
+        print(f"Your hand: {", ".join(map(str, playerHand))
+                            }. Current count: {playerCount}")
+
+        print(f"Dealer's hand: {", ".join(
+            map(str, dealerHand))}. Dealer's Count: {dealerCount}")
 
         if dealerCount > 21:
             print("Dealer busts.")
             dealerBust = True
 
     clear()
-    print(playerHand, playerCount)
-    print(dealerHand, dealerCount)
+    print(f"Your hand: {", ".join(map(str, playerHand))
+                        }. Current count: {playerCount}")
+
+    print(f"Dealer's hand: {", ".join(
+        map(str, dealerHand))}. Dealer's Count: {dealerCount}")
 
     if playerCount > dealerCount:
         if playerBust:
@@ -140,6 +153,9 @@ while len(deck) > 11:
     if playerCount == dealerCount:
         print("Push!")
         balance += bet
+    if balance <= 0:
+        print("You ran out of money!")
+        deck = []
 
     playerHand = []
     dealerHand = []
@@ -153,4 +169,8 @@ while len(deck) > 11:
     bet = 0
     time.sleep(3)
 
+print("Cut card reached, shoe is over") if balance > 0 else print(
+    "You went bankrupt!")
+print(f"Your starting balance was {
+      startingBalance} and your ending balance was {balance}")
 sys.exit()
