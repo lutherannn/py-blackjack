@@ -80,8 +80,26 @@ while len(deck) > 11:
         dealerNatural = True
 
     while not playerDone:
-        if not playerNatural:
-            playerAction = input("(S)tand or (H)it> ").lower()
+        if not playerNatural or not dealerNatural:
+            playerAction = input("(S)tand or (H)it or (D)ouble> ").lower()
+            if playerAction == "d":
+                if balance + bet >= bet * 2:
+                    balance -= bet
+                    bet = bet * 2
+                    card = random.choice(deck)
+                    if card == 1:
+                        if playerCount <= 10:
+                            playerHand.append(11)
+                        else:
+                            playerHand.append(1)
+                    else:
+                        playerHand.append(card)
+                    deck.remove(card)
+                    playerCount = sum(playerHand)
+                    playerDone = True
+                else:
+                    print("Balance isn't high enough to double down.")
+                    time.sleep(2)
             if playerAction == "h":
                 card = random.choice(deck)
                 if card == 1:
